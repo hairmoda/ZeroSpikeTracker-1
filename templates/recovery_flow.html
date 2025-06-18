@@ -1,21 +1,24 @@
 <script>
-    async function activateAI() {
-        const btn = document.querySelector('button');
-        const resultBox = document.getElementById('resultBox');
+    document.addEventListener("DOMContentLoaded", function () {
+        const activateBtn = document.getElementById("activateBtn");
+        const messageBox = document.getElementById("messageBox");
 
-        btn.innerText = "✅ تم التفعيل";
-        btn.disabled = true;
-        resultBox.style.display = "block";
-        resultBox.innerText = "🔄 جاري تحليل السوق...";
+        activateBtn.addEventListener("click", async function () {
+            activateBtn.innerText = "✅ تم التفعيل";
+            activateBtn.disabled = true;
 
-        try {
-            const response = await fetch("/trigger-recovery", {
-                method: "POST"
-            });
-            const data = await response.json();
-            resultBox.innerText = "🧠 التوصية: " + data.message;
-        } catch (error) {
-            resultBox.innerText = "❌ فشل الاتصال بوحدة الذكاء!";
-        }
-    }
+            try {
+                const response = await fetch("/trigger-recovery", {
+                    method: "POST"
+                });
+                const data = await response.json();
+                messageBox.innerText = data.message;
+                messageBox.style.display = "block";
+            } catch (error) {
+                messageBox.innerText = "حدث خطأ في الاتصال بالنظام السيادي.";
+                messageBox.style.color = "red";
+                messageBox.style.display = "block";
+            }
+        });
+    });
 </script>
