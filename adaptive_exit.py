@@ -7,4 +7,3 @@ def should_exit(market_momentum, position):
     elif market_momentum > 0 and position == "short":
         return "Exit Short"
     return "Hold"
-
