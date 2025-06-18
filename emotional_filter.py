@@ -7,4 +7,3 @@ def emotional_spike_filter(rsi, fear_greed_index):
     elif rsi < 25 or fear_greed_index < 20:
         return "Fear Spike - Block Trade"
     return "Safe"
-
