@@ -8,4 +8,3 @@ def scan_whale_intent(orderbook, volume_data):
     if large_orders or sudden_volume:
         return "Whale Intent Detected"
     return "No Whale Activity"
-
