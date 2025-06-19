@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>⚡ نظام الاسترداد السيادي</title>
   <style>
     body {
@@ -17,54 +17,60 @@
     }
     button {
       background-color: #00ff99;
+      color: #000;
+      padding: 12px 30px;
+      font-size: 18px;
       border: none;
-      padding: 15px 30px;
-      font-size: 20px;
+      border-radius: 8px;
       cursor: pointer;
-      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
     .status {
       margin-top: 30px;
-      font-size: 18px;
+      font-size: 17px;
     }
-    #messageBox {
-      margin-top: 20px;
+    #recommendation {
+      margin-top: 30px;
       font-size: 20px;
-      display: none;
       color: white;
+      background-color: #111;
+      padding: 15px;
+      border-radius: 8px;
+      display: none;
     }
   </style>
 </head>
 <body>
   <h1>⚡ نظام الاسترداد السيادي</h1>
+
   <button id="recoveryBtn">تنشيط الذكاء السيادي الآن</button>
 
   <div class="status">
-    🧠 حالة أنظمة الحماية:<br>
-    🧨 مصائد السوق: مفعّل<br>
-    🐋 نوايا الحيتان: مراقبة<br>
-    😌 الفلتر النفسي: مستقر<br>
-    <br>
-    📈 نسبة استرداد رأس المال: <b>27 / 50 USDT</b>
+    🧠 أنظمة الحماية: فعّالة<br>
+    🧱 مصائد السوق: مغلقة<br>
+    🛰️ نوايا الحيتان: مراقبة<br>
+    😌 الفلتر النفسي: مستقر<br><br>
+    💰 نسبة الاسترداد: <b>27 / 50 USDT</b>
   </div>
 
-  <div id="messageBox"></div>
+  <div id="recommendation"></div>
 
   <script>
-    document.getElementById('recoveryBtn').addEventListener('click', async () => {
-      const btn = document.getElementById('recoveryBtn');
+    const btn = document.getElementById('recoveryBtn');
+    const box = document.getElementById('recommendation');
+
+    btn.addEventListener('click', async () => {
       btn.innerText = "✅ تم التفعيل";
       btn.disabled = true;
 
-      try {
-        const response = await fetch("/trigger-recovery", { method: "POST" });
-        const data = await response.json();
-        const msgBox = document.getElementById("messageBox");
-        msgBox.innerText = "📌 التوصية: " + data.message;
-        msgBox.style.display = "block";
-      } catch (err) {
-        alert("حدث خطأ أثناء جلب التوصية.");
-      }
+      const res = await fetch('/trigger-recovery', { method: "POST" });
+      const data = await res.json();
+      box.innerText = "📌 التوصية: " + data.message;
+      box.style.display = "block";
     });
   </script>
 </body>
