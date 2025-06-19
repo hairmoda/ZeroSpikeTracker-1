@@ -1,0 +1,49 @@
+<!-- templates/project_progress.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تطور مشروع ZeroSpikeTracker</title>
+  <style>
+    body { font-family: Arial; background-color: #101010; color: #f1f1f1; text-align: center; padding: 20px; }
+    .progress-container { width: 80%; margin: auto; background-color: #333; border-radius: 5px; overflow: hidden; }
+    .progress-bar { height: 30px; background-color: #00ff88; width: 38%; line-height: 30px; font-weight: bold; color: #000; }
+    .section { margin-top: 30px; text-align: right; direction: rtl; }
+    .ready { color: #00ff88; }
+    .inprogress { color: #ffaa00; }
+    .pending { color: #8888ff; }
+  </style>
+</head>
+<body>
+
+  <h1>🧠 تطور مشروع ZeroSpikeTracker Quantum AI</h1>
+
+  <div class="progress-container">
+    <div class="progress-bar">38% مكتمل</div>
+  </div>
+
+  <div class="section">
+    <h3>✅ الوحدات الجاهزة:</h3>
+    <ul class="ready">
+      <li>تشغيل Flask وGitHub وRailway</li>
+      <li>ربط واجهة DEX</li>
+      <li>تهيئة `requirements.txt` و `Procfile`</li>
+    </ul>
+
+    <h3>🚧 جاري التنفيذ:</h3>
+    <ul class="inprogress">
+      <li>تفعيل صفحة /liquidation-data</li>
+      <li>الربط اللحظي من Binance</li>
+      <li>تصفية البيانات النفسية والمؤسساتية</li>
+    </ul>
+
+    <h3>⏳ ما تبقى:</h3>
+    <ul class="pending">
+      <li>واجهة التحكم الذكية (Quantum Dashboard الكاملة)</li>
+      <li>وحدة Ultra Trap + تحليل الحيتان</li>
+      <li>نظام استرجاع الخسائر الكامل</li>
+    </ul>
+  </div>
+
+</body>
+</html>
