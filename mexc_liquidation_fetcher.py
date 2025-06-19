@@ -14,6 +14,7 @@ def get_liquidations(limit=50):
 
             bids = data.get("bids", [])
             asks = data.get("asks", [])
+
             if bids:
                 results.append({
                     "symbol": symbol.replace("_", "/"),
@@ -22,6 +23,7 @@ def get_liquidations(limit=50):
                     "side": "BUY",
                     "time": int(time.time() * 1000)
                 })
+
             if asks:
                 results.append({
                     "symbol": symbol.replace("_", "/"),
@@ -31,8 +33,6 @@ def get_liquidations(limit=50):
                     "time": int(time.time() * 1000)
                 })
 
-        # ترتيب حسب الحجم
-        results = sorted(results, key=lambda x: x["vol"], reverse=True)[:limit]
-        return results
+        return sorted(results, key=lambda x: x["vol"], reverse=True)[:limit]
     except Exception as e:
         return [{"error": str(e)}]
