@@ -1,3 +1,5 @@
+# app.py
+
 from flask import Flask, render_template, jsonify
 from dex_screener_scanner import fetch_dex_opportunities
 
@@ -13,4 +15,6 @@ def home():
 def dex_data():
     return jsonify(fetch_dex_opportunities())
 
-
+# لتشغيل التطبيق محليًا
+if __name__ == "__main__":
+    app.run(debug=True)
