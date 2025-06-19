@@ -1,75 +1,31 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <title>📉 تتبّع التصفيات - MEXC</title>
-  <style>
-    body {
-      background-color: #0d0d0d;
-      color: #00ffcc;
-      font-family: 'Cairo', sans-serif;
-      text-align: center;
-      padding: 30px;
-    }
-    h1 {
-      color: #ff3399;
-    }
-    table {
-      width: 100%;
-      margin-top: 20px;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 12px;
-      border-bottom: 1px solid #333;
-    }
-    th {
-      background-color: #111;
-    }
-  </style>
-</head>
-<body>
-  <h1>📉 نظام تتبع تصفيات MEXC</h1>
+# mexc_liquidation_fetcher.py
 
-  <table id="liquidationTable">
-    <thead>
-      <tr>
-        <th>الرمز</th>
-        <th>الحجم</th>
-        <th>السعر</th>
-        <th>الاتجاه</th>
-        <th>الوقت</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+import requests
+import time
 
-  <script>
-    async function loadLiquidations() {
-      try {
-        const response = await fetch('/liquidation-data');
-        const data = await response.json();
-        const tbody = document.querySelector('#liquidationTable tbody');
-        tbody.innerHTML = '';
+def get_liquidations(limit=50):
+    try:
+        symbols = ["BTC_USDT", "ETH_USDT", "PEPE_USDT", "DOGE_USDT"]
+        results = []
 
-        data.forEach(item => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${item.symbol}</td>
-            <td>${item.vol}</td>
-            <td>${item.price}</td>
-            <td>${item.side === 'BUY' ? '📈 شراء' : '📉 بيع'}</td>
-            <td>${new Date(item.time).toLocaleString()}</td>
-          `;
-          tbody.appendChild(row);
-        });
-      } catch (err) {
-        console.error('فشل في تحميل البيانات', err);
-      }
-    }
+        for symbol in symbols:
+            url = f"https://api.mexc.com/api/v3/market/deals?symbol={symbol}&limit={limit}"
+            response = requests.get(url)
+            response.raise_for_status()
+            trades = response.json()
 
-    setInterval(loadLiquidations, 4000);
-    loadLiquidations();
-  </script>
-</body>
-</html>
+            for trade in trades:
+                results.append({
+                    "symbol": symbol.replace("_", "/"),
+                    "vol": float(trade.get("quantity", 0)),
+                    "price": trade.get("price"),
+                    "side": "BUY" if trade.get("side") == "BID" else "SELL",
+                    "time": int(float(trade.get("time", time.time())) * 1000)
+                })
+
+        # ترتيب حسب الحجم ونأخذ الأكبر فقط
+        results = sorted(results, key=lambda x: x["vol"], reverse=True)[:50]
+        return results
+
+    except Exception as e:
+        return [{"error": str(e)}]
