@@ -1,31 +1,93 @@
-# mexc_liquidation_fetcher.py
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>📉 نظام تتبّع التصفيات</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #00ffcc;
+      font-family: 'Cairo', sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #ff3399;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 95%;
+      margin: auto;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #333;
+    }
+    th {
+      background-color: #111;
+      color: #00ffcc;
+    }
+    tr:hover {
+      background-color: #222;
+    }
+    .error {
+      margin-top: 20px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>📉 نظام تتبّع تصفيات MEXC</h1>
 
-import requests
-import time
+  <table id="liqTable">
+    <thead>
+      <tr>
+        <th>الرمز</th>
+        <th>الحجم</th>
+        <th>السعر</th>
+        <th>الاتجاه</th>
+        <th>الوقت</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-def get_liquidations(limit=50):
-    try:
-        symbols = ["BTC_USDT", "ETH_USDT", "PEPE_USDT", "DOGE_USDT"]
-        results = []
+  <div id="error" class="error"></div>
 
-        for symbol in symbols:
-            url = f"https://api.mexc.com/api/v3/market/deals?symbol={symbol}&limit={limit}"
-            response = requests.get(url)
-            response.raise_for_status()
-            trades = response.json()
+  <script>
+    async function loadLiquidations() {
+      try {
+        const res = await fetch('/liquidation-data');
+        const data = await res.json();
+        const tbody = document.querySelector('#liqTable tbody');
+        const errorBox = document.getElementById('error');
+        tbody.innerHTML = '';
+        errorBox.innerText = '';
 
-            for trade in trades:
-                results.append({
-                    "symbol": symbol.replace("_", "/"),
-                    "vol": float(trade.get("quantity", 0)),
-                    "price": trade.get("price"),
-                    "side": "BUY" if trade.get("side") == "BID" else "SELL",
-                    "time": int(float(trade.get("time", time.time())) * 1000)
-                })
+        if (data[0]?.error) {
+          errorBox.innerText = '⚠️ خطأ في جلب البيانات: ' + data[0].error;
+          return;
+        }
 
-        # ترتيب حسب الحجم ونأخذ الأكبر فقط
-        results = sorted(results, key=lambda x: x["vol"], reverse=True)[:50]
-        return results
+        data.forEach(item => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${item.symbol}</td>
+            <td>${item.vol}</td>
+            <td>${item.price}</td>
+            <td>${item.side === 'BUY' ? '📈 شراء' : '📉 بيع'}</td>
+            <td>${new Date(item.time).toLocaleTimeString()}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        document.getElementById('error').innerText = '❌ حدث خطأ أثناء تحميل البيانات.';
+      }
+    }
 
-    except Exception as e:
-        return [{"error": str(e)}]
+    loadLiquidations();
+    setInterval(loadLiquidations, 4000);
+  </script>
+</body>
+</html>
