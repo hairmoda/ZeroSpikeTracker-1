@@ -1,28 +1,27 @@
-import requests
+from pymexc import spot, futures
 import time
+
+# تهيئة عميل MEXC
+spot_client = spot.HTTP(
+    api_key=None,
+    api_secret=None
+)
 
 def get_liquidations(limit=50):
     try:
-        symbols = ["BTCUSDT", "ETHUSDT", "PEPEUSDT", "DOGEUSDT"]
-        results = []
-
-        for symbol in symbols:
-            url = f"https://api.mexc.com/api/v3/market/trades?symbol={symbol}&limit={limit}"
-            response = requests.get(url)
-            response.raise_for_status()
-            trades = response.json()
-
-            for trade in trades:
-                results.append({
-                    "symbol": symbol[:-4] + "/USDT",
-                    "vol": float(trade.get("qty", 0)),
-                    "price": trade.get("price"),
-                    "side": "SELL" if trade.get("isBuyerMaker") else "BUY",
-                    "time": int(trade.get("time"))
-                })
-
-        results = sorted(results, key=lambda x: x["vol"], reverse=True)[:50]
-        return results
+        # خذ صفقات BTCUSDT الأخيرة
+        trades = spot_client.deals(symbol="BTCUSDT", limit=limit)
+        results = [
+            {
+                "symbol": trade["symbol"].replace("USDT", "/USDT"),
+                "vol": float(trade["quantity"]),
+                "price": trade["price"],
+                "side": "BUY" if trade["side"] == "BID" else "SELL",
+                "time": int(trade["time"])
+            } 
+            for trade in trades
+        ]
+        return sorted(results, key=lambda x: x["vol"], reverse=True)[:limit]
 
     except Exception as e:
         return [{"error": str(e)}]
