@@ -7,7 +7,7 @@ def get_liquidations(limit=50):
         results = []
 
         for symbol in symbols:
-            url = f"https://api.mexc.com/api/v3/market/deals?symbol={symbol}&limit={limit}"
+            url = f"https://api.mexc.com/api/v1/market/deals?symbol={symbol}&limit={limit}"
             response = requests.get(url)
             response.raise_for_status()
             trades = response.json()
