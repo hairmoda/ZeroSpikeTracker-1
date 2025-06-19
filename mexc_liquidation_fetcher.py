@@ -32,6 +32,10 @@ def get_liquidations(limit=50):
                     "side": "SELL",
                     "time": int(time.time() * 1000)
                 })
+                git add .
+git commit -m "fix: corrected MEXC depth URL for liquidation fetcher"
+git push
+
 
         return sorted(results, key=lambda x: x["vol"], reverse=True)[:limit]
     except Exception as e:
