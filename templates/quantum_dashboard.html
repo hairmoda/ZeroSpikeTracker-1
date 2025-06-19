@@ -1,115 +1,43 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <title>💡 Quantum Dashboard</title>
-  <style>
-    body {
-      background-color: #0d0d0d;
-      color: #00ffcc;
-      font-family: 'Cairo', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    nav {
-      background-color: #111;
-      padding: 15px;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    nav a {
-      color: #00ff99;
-      text-decoration: none;
-      font-size: 18px;
-      padding: 8px 16px;
-      border: 1px solid #00ff99;
-      border-radius: 6px;
-      transition: background-color 0.3s;
-    }
-    nav a:hover {
-      background-color: #00ff99;
-      color: #000;
-    }
-    .content {
-      padding: 40px;
-      text-align: center;
-    }
-    table {
-      width: 100%;
-      margin-top: 30px;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 12px;
-      border-bottom: 1px solid #333;
-    }
-    th {
-      background-color: #111;
-    }
-    h2 {
-      margin-top: 40px;
-      color: #ffcc00;
-    }
-  </style>
-</head>
-<body>
-  <nav>
-    <a href="/">🏠 الصفحة الرئيسية</a>
-    <a href="/recovery-flow">⚡ الاسترداد السيادي</a>
-    <a href="/liquidation-tracker">📉 تتبع التصفيات</a>
-  </nav>
+<h2>📈 الفرص المجنونة DEX</h2>
+<table id="dexTable">
+  <thead>
+    <tr>
+      <th>الرمز</th>
+      <th>DEX</th>
+      <th>السعر $</th>
+      <th>التغيير %</th>
+      <th>الحجم</th>
+      <th>رابط</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
-  <div class="content">
-    <h1>🧠 مرحبًا بك في Quantum Dashboard</h1>
-    <p>هذه هي الواجهة الذكية لنظام التداول السيادي. اختر القسم الذي ترغب بمراجعته من الشريط العلوي.</p>
-
-    <h2>🌐 فرص DEX المجنونة</h2>
-    <table id="dexTable">
-      <thead>
-        <tr>
-          <th>الرمز</th>
-          <th>DEX</th>
-          <th>السعر $</th>
-          <th>التغيير %</th>
-          <th>الحجم</th>
-          <th>رابط</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <script>
-    async function loadDexOpportunities() {
-      try {
-        const response = await fetch('/dex-opportunities');
-        const data = await response.json();
-        const tbody = document.querySelector('#dexTable tbody');
-        tbody.innerHTML = '';
-
-        data.forEach(item => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${item.symbol}</td>
-            <td>${item.dex}</td>
-            <td>${item.priceUsd}</td>
-            <td>${item.changePercent}%</td>
-            <td>${item.volume}</td>
-            <td><a href="${item.url}" target="_blank">🔗 فتح</a></td>
-          `;
-          tbody.appendChild(row);
-        });
-      } catch (err) {
-        console.error('فشل في تحميل فرص DEX', err);
-      }
-    }
-
-    loadDexOpportunities();
-    setInterval(loadDexOpportunities, 10000); // كل 10 ثوانٍ
-  </script>
-</body>
-</html>
 <script>
-  async function loadDexOpportunities() {
+async function loadDexOpportunities() {
+  try {
+    const response = await fetch('/dex-opportunities');
+    const data = await response.json();
+    const tbody = document.querySelector('#dexTable tbody');
+    tbody.innerHTML = '';
+
+    data.forEach(item => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${item.symbol}</td>
+        <td>${item.dex}</td>
+        <td>$${item.priceUsd}</td>
+        <td>${item.changePercent}%</td>
+        <td>${item.volume}</td>
+        <td><a href="${item.url}" target="_blank">رابط</a></td>
+      `;
+      tbody.appendChild(row);
+    });
+  } catch (err) {
+    console.error('فشل في تحميل بيانات DEX', err);
+  }
+}
+
+loadDexOpportunities();
+setInterval(loadDexOpportunities, 10000); // كل 10 ثواني
+</script>
