@@ -12,3 +12,5 @@ def home():
 @app.route("/dex-opportunities")
 def dex_data():
     return jsonify(fetch_dex_opportunities())
+
+
