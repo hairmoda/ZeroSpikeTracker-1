@@ -1,27 +1,38 @@
-from pymexc import spot, futures
+import requests
 import time
-
-# تهيئة عميل MEXC
-spot_client = spot.HTTP(
-    api_key=None,
-    api_secret=None
-)
 
 def get_liquidations(limit=50):
     try:
-        # خذ صفقات BTCUSDT الأخيرة
-        trades = spot_client.deals(symbol="BTCUSDT", limit=limit)
-        results = [
-            {
-                "symbol": trade["symbol"].replace("USDT", "/USDT"),
-                "vol": float(trade["quantity"]),
-                "price": trade["price"],
-                "side": "BUY" if trade["side"] == "BID" else "SELL",
-                "time": int(trade["time"])
-            } 
-            for trade in trades
-        ]
-        return sorted(results, key=lambda x: x["vol"], reverse=True)[:limit]
+        symbols = ["BTC_USDT", "ETH_USDT", "PEPE_USDT", "DOGE_USDT"]
+        results = []
 
+        for symbol in symbols:
+            url = f"https://api.mexc.com/api/v3/depth?symbol={symbol}&limit=5"
+            response = requests.get(url)
+            response.raise_for_status()
+            data = response.json()
+
+            bids = data.get("bids", [])
+            asks = data.get("asks", [])
+            if bids:
+                results.append({
+                    "symbol": symbol.replace("_", "/"),
+                    "vol": float(bids[0][1]),
+                    "price": bids[0][0],
+                    "side": "BUY",
+                    "time": int(time.time() * 1000)
+                })
+            if asks:
+                results.append({
+                    "symbol": symbol.replace("_", "/"),
+                    "vol": float(asks[0][1]),
+                    "price": asks[0][0],
+                    "side": "SELL",
+                    "time": int(time.time() * 1000)
+                })
+
+        # ترتيب حسب الحجم
+        results = sorted(results, key=lambda x: x["vol"], reverse=True)[:limit]
+        return results
     except Exception as e:
         return [{"error": str(e)}]
