@@ -33,17 +33,24 @@
       color: #000;
     }
     .content {
-      padding: 50px;
+      padding: 40px;
       text-align: center;
     }
-    h1 {
-      color: #ff3399;
-      font-size: 32px;
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
     }
-    p {
-      font-size: 18px;
-      color: #ccc;
-      margin-top: 20px;
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #333;
+    }
+    th {
+      background-color: #111;
+    }
+    h2 {
+      margin-top: 40px;
+      color: #ffcc00;
     }
   </style>
 </head>
@@ -52,14 +59,55 @@
     <a href="/">🏠 الصفحة الرئيسية</a>
     <a href="/recovery-flow">⚡ الاسترداد السيادي</a>
     <a href="/liquidation-tracker">📉 تتبع التصفيات</a>
-    <a href="/dex-insights">🌐 فرص DEX المجنونة</a>
   </nav>
 
   <div class="content">
     <h1>🧠 مرحبًا بك في Quantum Dashboard</h1>
     <p>هذه هي الواجهة الذكية لنظام التداول السيادي. اختر القسم الذي ترغب بمراجعته من الشريط العلوي.</p>
+
+    <h2>🌐 فرص DEX المجنونة</h2>
+    <table id="dexTable">
+      <thead>
+        <tr>
+          <th>الرمز</th>
+          <th>DEX</th>
+          <th>السعر $</th>
+          <th>التغيير %</th>
+          <th>الحجم</th>
+          <th>رابط</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
+
+  <script>
+    async function loadDexOpportunities() {
+      try {
+        const response = await fetch('/dex-opportunities');
+        const data = await response.json();
+        const tbody = document.querySelector('#dexTable tbody');
+        tbody.innerHTML = '';
+
+        data.forEach(item => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${item.symbol}</td>
+            <td>${item.dex}</td>
+            <td>${item.priceUsd}</td>
+            <td>${item.changePercent}%</td>
+            <td>${item.volume}</td>
+            <td><a href="${item.url}" target="_blank">🔗 فتح</a></td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error('فشل في تحميل فرص DEX', err);
+      }
+    }
+
+    loadDexOpportunities();
+    setInterval(loadDexOpportunities, 10000); // كل 10 ثوانٍ
+  </script>
 </body>
 </html>
-
-<a href="/dex-insights" style="color:#00ff99; margin: 10px;">🌐 فرص DEX المجنونة</a>
