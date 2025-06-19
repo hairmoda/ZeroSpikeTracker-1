@@ -1,23 +1,12 @@
-from flask import Flask, render_template, jsonify
-from dex_screener_scanner import fetch_dex_opportunities
+from flask import Flask, jsonify
+from Sbinance_liquidation_fetcher import fetch_liquidations  # استبدال MEXC ب Binance
 
 app = Flask(__name__)
 
-# الصفحة الرئيسية
-@app.route("/")
-def home():
-    return render_template("quantum_dashboard.html")
+@app.route('/liquidation-data')
+def get_liquidation_data():
+    data = fetch_liquidations()
+    return jsonify(data)
 
-# API: بيانات فرص DEX
-@app.route("/dex-opportunities")
-def dex_data():
-    return jsonify(fetch_dex_opportunities())
-
-# صفحة تقدم المشروع
-@app.route("/progress")
-def progress():
-    return render_template("project_progress.html")
-
-# لتشغيل التطبيق محلياً
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
