@@ -4,4 +4,4 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return render_template('index.html')  # سيتم فتح ملف index.html عند دخول /
+    return render_template('index.html')
